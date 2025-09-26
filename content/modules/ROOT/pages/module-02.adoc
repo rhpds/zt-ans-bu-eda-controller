@@ -1,79 +1,79 @@
-= Lab Guide: Configuring Event-Driven Ansible Resources
+= ラボガイド: イベント駆動型Ansibleリソースの設定
 :doctype: book
 :notoc:
 :toc-title: Table of Contents
 :nosectnums:
 :icons: font
 
-_A guide to understanding and configuring the key resources in Event-Driven Ansible: Credentials, Decision Environments, and Projects._
+_イベント駆動型Ansibleの主要なリソースである、認証情報、Decision Environment、プロジェクトの理解と設定に関するガイドです。_
 
 ---
 
-== Introduction to Automation Decisions Resources
+== Automation Decisionsリソース入門
 
-Just like Automation Controller, Event-Driven Ansible requires several resources to be configured before you can activate a rulebook to listen for events. There are three main resource types you will work with.
-
-[IMPORTANT]
-.Ansible Automation Platform (AAP) Credentials
-====
-* **Username:** `admin`
-* **Password:** `ansible123!`
-====
+Automation Controllerと同様に、イベント駆動型Ansibleでも、Rulebookを有効化してイベントをリッスンする前に、いくつかのリソースを設定する必要があります。主に扱うリソースは3種類あります。
 
 [IMPORTANT]
-.Gitea Credentials
+.Ansible Automation Platform (AAP) の認証情報
 ====
-* **Username:** `student`
-* **Password:** `learn_ansible`
+* **ユーザー名:** `admin`
+* **パスワード:** `ansible123!`
 ====
 
-=== Credentials
+[IMPORTANT]
+.Gitea の認証情報
+====
+* **ユーザー名:** `student`
+* **パスワード:** `learn_ansible`
+====
 
-Credentials in Event-Driven Ansible are used to pull content from private repositories, connect to external event sources, and secure inbound webhooks. This lab uses public repositories, so you will not need to create a source control credential.
+=== 認証情報 (Credentials)
 
-NOTE: For more information, see the official documentation: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-credentials[Using automation decisions: Chapter 2. Credentials].
+イベント駆動型Ansibleの認証情報は、プライベートリポジトリからコンテンツを取得したり、外部のイベントソースに接続したり、受信Webhookをセキュアにするために使用されます。このラボではパブリックリポジトリを使用するため、ソース管理の認証情報を作成する必要はありません。
 
-=== Decision Environments
+NOTE: 詳細については、公式ドキュメントを参照してください: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-credentials[Using automation decisions: Chapter 2. Credentials].
 
-Decision Environments are container images that bundle all the necessary dependencies (such as collections with source plugins) required to execute a rulebook. They are conceptually similar to Execution Environments, which are used for running playbooks. For example, to receive events from Dynatrace, you would need a Decision Environment that includes the `dynatrace.event_driven_ansible` collection.
+=== Decision Environment
 
-. **Explore the default Decision Environment.** In the `AAP` tab, navigate to **Automation Decisions** → **Decision Environments**. You will see a pre-configured environment named "Default Decision Environment." This environment is distributed by Red Hat and contains the `ansible.eda` collection, which includes source plugins for sources like AWS SQS, Kafka, and Alertmanager (which you will use soon).
+Decision Environmentは、Rulebookの実行に必要なすべての依存関係（ソースプラグインを含むCollectionなど）をバンドルしたコンテナイメージです。これらは、Playbookの実行に使用されるExecution Environmentと概念的に似ています。例えば、Dynatraceからイベントを受信するには、`dynatrace.event_driven_ansible` Collectionを含むDecision Environmentが必要になります。
+
+. **デフォルトのDecision Environmentを探索します。** `AAP`タブで、**Automation Decisions** → **Decision Environments** に移動します。 "Default Decision Environment" という名前の事前設定済み環境が表示されます。この環境はRed Hatによって配布されており、`ansible.eda` Collectionが含まれています。これにはAWS SQS、Kafka、そして（後ほど使用する）Alertmanagerなどのソースに対応するソースプラグインが含まれています。
 +
-image::Oct-17-2024_at_13.03.31-image.png[Decision Environments list view, opts="border"]
+image::Oct-17-2024_at_13.03.31-image.png[Decision Environment一覧画面, opts="border"]
 
-NOTE: For more information, see the official documentation: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-decision-environments[Using automation decisions: Chapter 5. Decision environments].
+NOTE: 詳細については、公式ドキュメントを参照してください: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-decision-environments[Using automation decisions: Chapter 5. Decision environments].
 
 ---
 
-== Task: Import the EDA Project
+== タスク: EDAプロジェクトのインポート
 
-**Projects** in Event-Driven Ansible are source control repositories that contain your rulebooks. The project for this lab contains a rulebook for Alertmanager. You will now import this project.
+イベント駆動型Ansibleにおける**プロジェクト**は、Rulebookを含むソース管理リポジトリです。このラボのプロジェクトには、Alertmanager用のRulebookが含まれています。これからこのプロジェクトをインポートします。
 
-. **Navigate to the Projects page.** In the `AAP` tab, go to **Automation Decisions** → **Projects**.
-. **Create a new project** by clicking the **Create project** button.
+. **プロジェクトページに移動します。** `AAP`タブで、**Automation Decisions** → **Projects** に進みます。
+. **Create project**ボタンをクリックして、新しいプロジェクトを作成します。
 +
-image::Oct-17-2024_at_13.06.48-image.png[Create project button, opts="border"]
-. **Enter the project details.** **Fill** out the form with the following details:
+image::Oct-17-2024_at_13.06.48-image.png[Create projectボタン, opts="border"]
+. **プロジェクトの詳細を入力します。** 以下の詳細でフォームに入力してください。
 +
 [cols="1,2a"]
 |===
-| Key | Value
+| キー | 値
 | *Name* | `My EDA project`
 | *Description* | `Project containing Event-Driven Ansible content`
 | *Organization* | `Default`
 | *Source control URL* | `http://gitea:3000/student/eda-project`
-| *Source control credential*| _Leave blank_ (This is a public repository)
+| *Source control credential*| _空欄のままにします_ (これはパブリックリポジトリです)
 |===
-. **Save and sync the project.** **Click** **Create project**. If successful, the status should show **Completed**. If you make any changes to the files in the repository, you will need to re-sync the project using the "Sync project" button.
+. **プロジェクトを保存し、同期します。** **Create project**をクリックします。成功すると、ステータスが**Completed**と表示されます。リポジトリ内のファイルに変更を加えた場合は、「Sync project」ボタンを使用してプロジェクトを再同期する必要があります。
 +
-image::Oct-17-2024_at_13.10.35-image.png[Successful project sync, opts="border"]
+image::Oct-17-2024_at_13.10.35-image.png[プロジェクト同期成功の画面, opts="border"]
 +
-NOTE: For more information, see the official documentation: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-projects[Using automation decisions: Chapter 4. Projects].
-. **(Optional) Explore the imported project.** To see the content you just imported, navigate to the `Gitea` tab and log in. The `eda-project` repository contains several rulebooks (including `alertmanager.yml` which you'll use next) and a `playbooks` directory. The rulebooks reference the *template name* in Automation Execution, not the playbook filename.
+NOTE: 詳細については、公式ドキュメントを参照してください: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-projects[Using automation decisions: Chapter 4. Projects].
+. **(任意) インポートしたプロジェクトを探索します。** インポートしたコンテンツを確認するには、`Gitea`タブに移動してログインします。`eda-project`リポジトリには、いくつかのRulebook（次で使用する`alertmanager.yml`を含む）と`playbooks`ディレクトリが含まれています。Rulebookは、Playbookのファイル名ではなく、Automation Executionの*テンプレート名*を参照することに注意してください。
 
-You are now ready to proceed to the next challenge.
+これで、次のチャレンジに進む準備ができました。
 
 ---
-== Troubleshooting
+== トラブルシューティング
 
-If you experience issues with this lab, please link:https://github.com/ansible/workshops/issues
+このラボで問題が発生した場合は、こちらへ: link:https://github.com/ansible/workshops/issues
