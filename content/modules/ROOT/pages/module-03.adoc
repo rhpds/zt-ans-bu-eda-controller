@@ -1,47 +1,47 @@
-= Lab Guide: Creating a Rulebook Activation
+= ラボガイド: Rulebook Activationの作成
 :doctype: book
 :notoc:
 :toc-title: Table of Contents
 :nosectnums:
 :icons: font
 
-_A guide to creating and understanding Rulebook Activations in Event-Driven Ansible._
+_イベント駆動型AnsibleにおけるRulebook Activationの作成と理解に関するガイドです。_
 
 ---
 
-== Introduction
+== はじめに
 
-Up to this point, you've inspected a rulebook but haven't seen how to start it. **Rulebook Activations** are the "always listening" part of Event-Driven Ansible. They combine a Project (containing rulebooks) with a Decision Environment to create a listener that is always running, waiting for new events to handle.
+ここまでの手順で、Rulebookの中身を確認しましたが、それをどのように起動するかはまだ見ていませんでした。**Rulebook Activation**は、イベント駆動型Ansibleの「常時リッスンする」部分です。これは、プロジェクト（Rulebookを含む）とDecision Environmentを組み合わせて、常に実行され、新しいイベントの処理を待機するリスナーを作成します。
 
-Event-Driven Ansible manages the restart of a Rulebook Activation if it stops due to a failure, and the **Rule Audit** screen shows a record every time an event is received that matches a condition in the rulebook.
-
-[IMPORTANT]
-.Ansible Automation Platform (AAP) Credentials
-====
-* **Username:** `admin`
-* **Password:** `ansible123!`
-====
+イベント駆動型Ansibleは、`Rulebook Activation`が障害で停止した場合の再起動を管理し、`**Rule Audit**`画面には、Rulebookの条件に一致するイベントが受信されるたびに記録が表示されます。
 
 [IMPORTANT]
-.Gitea Credentials
+.Ansible Automation Platform (AAP) の認証情報
 ====
-* **Username:** `student`
-* **Password:** `learn_ansible`
+* **ユーザー名:** `admin`
+* **パスワード:** `ansible123!`
+====
+
+[IMPORTANT]
+.Gitea の認証情報
+====
+* **ユーザー名:** `student`
+* **パスワード:** `learn_ansible`
 ====
 
 ---
 
-== Task: Create a Rulebook Activation
+== タスク: Rulebook Activationの作成
 
-In this task, you will create and enable a Rulebook Activation.
+このタスクでは、`Rulebook Activation`を作成し、有効化します。
 
-. **Navigate to the Rulebook Activations page.** In the `AAP` tab, go to the left navigation menu and select **Automation Decisions** → **Rulebook Activations**.
-. **Create a new Rulebook Activation** by clicking the blue **Create rulebook activation** button.
-. **Enter the activation details.** **Fill** out the form with the following values:
+. **Rulebook Activationsページに移動します。** `AAP`タブで、左側のナビゲーションメニューから **Automation Decisions** → **Rulebook Activations** を選択します。
+. 青い**Create rulebook activation**ボタンをクリックして、新しい`Rulebook Activation`を作成します。
+. **アクティベーションの詳細を入力します。** 以下の値でフォームに入力してください。
 +
 [cols="1,2,2a"]
 |===
-| Key | Value | Notes
+| キー | 値 | 備考
 
 | *Name*
 | `Alertmanager events`
@@ -65,7 +65,7 @@ In this task, you will create and enable a Rulebook Activation.
 
 | *Credential*
 | `AAP`
-| This credential is used to execute job templates in the automation controller.
+| この認証情報は、Automation Controllerでジョブテンプレートを実行するために使用されます。
 
 | *Decision environment*
 | `Workshop Decision Environment`
@@ -81,30 +81,30 @@ In this task, you will create and enable a Rulebook Activation.
 
 | *Rulebook activation enabled?*
 | ☑
-| Ensure this is enabled.
+| これが有効になっていることを確認してください。
 |===
 +
-NOTE: For product documentation, see link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-rulebook-activations[Using automation decisions: Chapter 8. Rulebook activations].
+NOTE: 製品ドキュメントについては、こちらを参照してください: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-rulebook-activations[Using automation decisions: Chapter 8. Rulebook activations].
 
-. **Save the activation** by clicking the **Create rulebook activation** button at the bottom of the form.
+. フォームの下部にある**Create rulebook activation**ボタンをクリックして、アクティベーションを保存します。
 +
-image::Nov-12-2024_at_13.56.18-image.png[Completed Rulebook Activation form, opts="border"]
+image::Nov-12-2024_at_13.56.18-image.png[入力が完了したRulebook Activationフォーム, opts="border"]
 
-. **Review the activation status.** You will be taken to a details page for the new Rulebook Activation. The *Activation status* may show as "Pending" or "Starting" but should transition to **Running** momentarily.
-. **Check the activation history.** **Select** the **History** tab at the top. Each time this Rulebook Activation starts or restarts, it gets a new ID and a new entry on this page. This is because each activation is a new `ansible-rulebook` process running inside a container.
+. **アクティベーションのステータスを確認します。** 新しい`Rulebook Activation`の詳細ページに移動します。*Activation status*は「Pending」または「Starting」と表示されるかもしれませんが、すぐに**Running**に移行するはずです。
+. **アクティベーションの履歴を確認します。** 上部にある**History**タブを選択します。この`Rulebook Activation`が開始または再起動されるたびに、新しいIDが割り当てられ、このページに新しいエントリが追加されます。これは、各アクティベーションがコンテナ内で実行される新しい`ansible-rulebook`プロセスであるためです。
 +
-image::Oct-17-2024_at_13.46.34-image.png[Running rulebook activation History tab, opts="border"]
+image::Oct-17-2024_at_13.46.34-image.png[実行中のRulebook ActivationのHistoryタブ, opts="border"]
 
-. **View the debug output.** You can **click** the link for the running activation (e.g., "1 - Alertmanager events") to see the live debug output of the running rulebook.
+. **デバッグ出力を表示します。** 実行中のアクティベーションのリンク（例：「1 - Alertmanager events」）をクリックすると、実行中のRulebookのライブデバッグ出力を確認できます。
 
-At this point, you have a rulebook that is actively listening for events from Alertmanager.
+この時点で、AlertmanagerからのイベントをアクティブにリッスンしているRulebookができました。
 
 ---
 
-== Next Steps
+== 次のステップ
 
-Now that your listener is active, it's time to generate an event. Proceed to the next challenge to continue.
+リスナーがアクティブになったので、次にイベントを生成します。次のチャレンジに進んでください。
 
-== Troubleshooting
+== トラブルシューティング
 
-If you have encountered an issue with this lab, please link:https://github.com/ansible/workshops/issues
+このラボで問題が発生した場合は、こちらへ: link:https://github.com/ansible/workshops/issues
