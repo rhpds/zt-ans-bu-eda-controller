@@ -1,52 +1,52 @@
-= Lab Guide: Introduction to Event-Driven Ansible
+= ラボガイド: イベント駆動型Ansible入門
 :doctype: book
 :notoc:
 :toc-title: Table of Contents
 :nosectnums:
 :icons: font
 
-_An introduction to the concepts of Event-Driven Ansible and a guide to configuring the necessary credentials in Ansible Automation Platform._
+_イベント駆動型Ansibleの概念についての紹介と、Ansible Automation Platformで必要な認証情報を設定するためのガイドです。_
 
 ---
 
-== Lab Overview
+== ラボの概要
 
-=== About this Lab Environment
+=== このラボ環境について
 
-Each interactive lab environment has a set time limit, often 60 minutes, and may include an idle timeout. If your environment times out, your progress will be lost, but you can restart the lab at any time.
-
-[IMPORTANT]
-.Ansible Automation Platform (AAP) Credentials
-====
-* **Username:** `admin`
-* **Password:** `ansible123!`
-====
+各対話型ラボ環境には、設定された時間制限（多くの場合60分）があり、アイドルタイムアウトが含まれる場合があります。環境がタイムアウトした場合、進捗は失われますが、いつでもラボを再開できます。
 
 [IMPORTANT]
-.Gitea Credentials
+.Ansible Automation Platform (AAP) の認証情報
 ====
-* **Username:** `student`
-* **Password:** `learn_ansible`
+* **ユーザー名:** `admin`
+* **パスワード:** `ansible123!`
+====
+
+[IMPORTANT]
+.Gitea の認証情報
+====
+* **ユーザー名:** `student`
+* **パスワード:** `learn_ansible`
 ====
 
 ---
 
-== Introduction to Event-Driven Ansible
+== イベント駆動型Ansible入門
 
-Event-Driven Ansible allows you to codify your response to infrastructure and application events, making your automation more resilient and responsive. While Automation Controller (via playbooks) automates a response, Event-Driven Ansible (via rulebooks) automates the recognition of the event itself.
+イベント駆動型Ansibleを使用すると、インフラストラクチャやアプリケーションのイベントへの対応をコード化でき、自動化の回復性と応答性を高めることができます。Automation Controllerが（Playbookを介して）応答を自動化するのに対し、イベント駆動型Ansibleは（Rulebookを介して）イベント自体の認識を自動化します。
 
-In recent releases of Ansible Automation Platform (AAP), components are co-located in a unified UI. The integration of Event-Driven Ansible and Automation Controller is configured by creating a credential that **Automation Decisions** can use to execute templates in **Automation Execution**.
+Ansible Automation Platform (AAP) の最近のリリースでは、コンポーネントは統一されたUIに集約されています。イベント駆動型AnsibleとAutomation Controllerの統合は、**Automation Decisions**が**Automation Execution**のテンプレートを実行するために使用できる認証情報を作成することによって設定されます。
 
-. **Log in to Ansible Automation Platform.** **Click** the `AAP` tab and log in using the `admin` / `ansible123!` credentials.
-. **Explore the UI.** After you log in, notice the menu sections for **Automation Execution** (Automation Controller) and **Automation Decisions** (Event-Driven Ansible Controller). As you work through this lab, you may need to navigate between these component menus.
-* **Automation Decisions:** This is where event conditions are defined in *Rulebooks* and activated via *Rulebook Activations*.
-* **Automation Execution:** This is where the *actions* are defined as *Templates* that run playbooks.
-. **Create a credential for Automation Decisions.** You must first create a credential to allow the two components to communicate. **Navigate** to **Automation Decisions** → **Infrastructure** → **Credentials** and **click** the **Create credential** button.
-. **Enter the credential details.** **Fill** out the form with the following details:
+. **Ansible Automation Platformにログインします。** `AAP`タブをクリックし、`admin` / `ansible123!`の認証情報を使用してログインします。
+. **UIを探索します。** ログイン後、**Automation Execution** (Automation Controller) と **Automation Decisions** (Event-Driven Ansible Controller) のメニューセクションがあることに注意してください。このラボを進める中で、これらのコンポーネントメニュー間を移動する必要があるかもしれません。
+* **Automation Decisions:** イベントの条件が *Rulebook* で定義され、*Rulebook Activations* を介して有効化される場所です。
+* **Automation Execution:** *アクション*がPlaybookを実行する *Templates* として定義される場所です。
+. **Automation Decisions用の認証情報を作成します。** まず、2つのコンポーネントが通信できるように認証情報を作成する必要があります。**Automation Decisions** → **Infrastructure** → **Credentials**に移動し、**Create credential**ボタンをクリックします。
+. **認証情報の詳細を入力します。** 以下の詳細でフォームに入力してください。
 +
 [cols="1,1,2a"]
 |===
-| Key | Value | Notes
+| キー | 値 | 備考
 
 | *Name*
 | `AAP`
@@ -54,7 +54,7 @@ In recent releases of Ansible Automation Platform (AAP), components are co-locat
 
 | *Description*
 | `Credential used to execute jobs from Automation Execution`
-|
+| `Automation Executionからジョブを実行するために使用される認証情報`
 
 | *Organization*
 | `Default`
@@ -66,7 +66,7 @@ In recent releases of Ansible Automation Platform (AAP), components are co-locat
 
 | *Red Hat Ansible Automation Platform*
 | `https://control.ansible.workshop/api/controller/`
-| The URL for the Automation Execution component.
+| Automation ExecutionコンポーネントのURLです。
 
 | *Username*
 | `admin`
@@ -78,19 +78,19 @@ In recent releases of Ansible Automation Platform (AAP), components are co-locat
 
 | *OAuth token*
 |
-| _Intentionally left blank_
+| _意図的に空欄にしています_
 
 | *Verify SSL*
-| Unchecked
+| チェックを外す
 |
 |===
 +
-NOTE: For more information, see the official documentation: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-set-up-rhaap-credential-type#eda-set-up-rhaap-credential-type[Red Hat Ansible Automation Platform credential].
+NOTE: 詳細については、公式ドキュメントを参照してください: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-set-up-rhaap-credential-type#eda-set-up-rhaap-credential-type[Red Hat Ansible Automation Platform credential].
 
-Take a moment to look around the new UI, then proceed to the next challenge.
+少し時間を取って新しいUIを見て回り、次のチャレンジに進んでください。
 
 ---
 
-== Troubleshooting
+== トラブルシューティング
 
-If you experience issues with this lab, please link:https://github.com/ansible/workshops/issues
+このラボで問題が発生した場合は、こちらへ: link:https://github.com/ansible/workshops/issues
