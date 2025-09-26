@@ -1,50 +1,50 @@
-= Lab Guide: Using Event Streams
+= ラボガイド: Event Streamの使用
 :doctype: book
 :notoc:
 :toc-title: Table of Contents
 :nosectnums:
 :icons: font
 
-_A guide to creating and using Event Streams in Event-Driven Ansible for simple and powerful event collection._
+_シンプルで強力なイベント収集のために、イベント駆動型AnsibleでEvent Streamを作成し使用するためのガイドです。_
 
 ---
 
-== Introduction to Event Streams
+== Event Stream入門
 
-**Event Streams** in Ansible Automation Platform are a useful way of collecting events that can be distributed to one or more Rulebook Activations. They provide a straightforward way to receive webhook events from your services without needing to configure complex networking, as they work over the default AAP route.
+Ansible Automation Platformの**Event Stream**は、一つまたは複数の`Rulebook Activation`に配信可能なイベントを収集するための便利な方法です。デフォルトのAAPルート経由で動作するため、複雑なネットワーク設定を必要とせず、サービスからWebhookイベントを簡単に受信する方法を提供します。
 
-image::Oct-17-2024_at_09.43.05-image.png[Event Stream diagram, opts="border"]
+image::Oct-17-2024_at_09.43.05-image.png[Event Streamの図, opts="border"]
 
-=== Objective
+=== 目的
 
-In this lab, you will create an Event Stream to receive events from a Gitea project. When a specific file (`alert.rules`) in the project is modified, the Event Stream will trigger a rulebook that redeploys a Prometheus stack to apply the new alerting rule automatically.
-
-[IMPORTANT]
-.Ansible Automation Platform (AAP) Credentials
-====
-* **Username:** `admin`
-* **Password:** `ansible123!`
-====
+このラボでは、Giteaプロジェクトからイベントを受信するためのEvent Streamを作成します。プロジェクト内の特定のファイル（`alert.rules`）が変更されると、Event Streamは新しいアラートルールを自動的に適用するためにPrometheusスタックを再デプロイするRulebookをトリガーします。
 
 [IMPORTANT]
-.Gitea Credentials
+.Ansible Automation Platform (AAP) の認証情報
 ====
-* **Username:** `student`
-* **Password:** `learn_ansible`
+* **ユーザー名:** `admin`
+* **パスワード:** `ansible123!`
+====
+
+[IMPORTANT]
+.Gitea の認証情報
+====
+* **ユーザー名:** `student`
+* **パスワード:** `learn_ansible`
 ====
 
 ---
 
-== Task 1: Secure the Event Stream with a Credential
+== タスク1: 認証情報でEvent Streamを保護する
 
-Event Streams can be secured using tokens. Before creating the Event Stream, you will create a credential to provide it with basic authentication.
+Event Streamはトークンを使用して保護することができます。Event Streamを作成する前に、基本的な認証を提供するための認証情報を作成します。
 
-. **Navigate to the Credentials page.** In the `AAP` tab, go to **Infrastructure** → **Credentials**.
-. **Create a new credential.** **Click** the **Create credential** button and use the following values:
+. **認証情報ページに移動します。** `AAP`タブで、**Infrastructure** → **Credentials** に移動します。
+. **新しい認証情報を作成します。** **Create credential**ボタンをクリックし、以下の値を使用します。
 +
 [cols="1,2,2a"]
 |===
-| Key | Value | Notes
+| キー | 値 | 備考
 
 | *Name*
 | `Gitea token`
@@ -64,21 +64,21 @@ Event Streams can be secured using tokens. Before creating the Event Stream, you
 
 | *HTTP Header Key*
 | `Authorization`
-| This is the default.
+| これがデフォルトです。
 |===
 
-NOTE: For product documentation, see link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-credentials[Using automation decisions: Chapter 2. Credentials].
+NOTE: 製品ドキュメントについては、こちらを参照してください: link:https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_decisions/eda-credentials[Using automation decisions: Chapter 2. Credentials].
 
-== Task 2: Create the Event Stream
+== タスク2: Event Streamの作成
 
-Now you will create the Event Stream itself and attach the credential you just made.
+次に、Event Stream自体を作成し、先ほど作成した認証情報をアタッチします。
 
-. **Navigate to the Event Streams page.** In the `AAP` tab, go to **Automation Decisions** → **Event Streams**.
-. **Create a new Event Stream.** **Click** **Create event stream** and use the following values:
+. **Event Streamページに移動します。** `AAP`タブで、**Automation Decisions** → **Event Streams** に移動します。
+. **新しいEvent Streamを作成します。** **Create event stream**をクリックし、以下の値を使用します。
 +
 [cols="1,2,2a"]
 |===
-| Key | Value | Notes
+| キー | 値 | 備考
 
 | *Name*
 | `Gitea project events`
@@ -90,40 +90,40 @@ Now you will create the Event Stream itself and attach the credential you just m
 
 | *Credential*
 | `Gitea token`
-| The credential you previously created.
+| 先ほど作成した認証情報。
 
 | *Forward events to rulebook activation*
-| Enabled
-| This is the default.
+| 有効
+| これがデフォルトです。
 |===
 +
-Your final Event Stream should look like this:
+最終的なEvent Streamはこのようになります。
 +
-image::Nov-04-2024_at_16.28.37-image.png[Final event stream configuration, opts="border"]
+image::Nov-04-2024_at_16.28.37-image.png[最終的なEvent Streamの設定, opts="border"]
 
-. **Copy the Event Stream URL.** **Click** the "Copy to clipboard" button next to the URL. You will use this in the next step.
+. **Event StreamのURLをコピーします。** URLの隣にある「クリップボードにコピー」ボタンをクリックします。これは次のステップで使用します。
 +
-image::Nov-12-2024_at_15.01.52-image.png[Event Stream copy to clipboard button, opts="border"]
+image::Nov-12-2024_at_15.01.52-image.png[Event Streamのクリップボードへコピーボタン, opts="border"]
 
-NOTE: Each Event Stream gets a unique URL path, allowing multiple streams to use the same default AAP route.
+NOTE: 各Event Streamは一意のURLパスを取得するため、複数のストリームが同じデフォルトのAAPルートを使用できます。
 
-== Task 3: Configure the Gitea Webhook
+== タスク3: Gitea Webhookの設定
 
-The Gitea project now needs to be modified to send events to the URL of the Event Stream you created.
+Giteaプロジェクトを変更して、作成したEvent StreamのURLにイベントを送信するように設定する必要があります。
 
-. **Navigate to Webhook settings in Gitea.** In the `Gitea` tab, select the project **eda-alertmanager**. Click **Settings** → **Webhooks** and then **Add Webhook** → **Gitea**.
+. **GiteaのWebhook設定に移動します。** `Gitea`タブで、プロジェクト**eda-alertmanager**を選択します。**Settings** → **Webhooks**をクリックし、**Add Webhook** → **Gitea**を選択します。
 +
-image::Nov-11-2024_at_13.39.26-image.png[Add a new webhook in Gitea, opts="border"]
+image::Nov-11-2024_at_13.39.26-image.png[Giteaで新しいWebhookを追加, opts="border"]
 
-. **Fill in the new webhook form.**
+. **新しいWebhookのフォームに入力します。**
 +
 [cols="1,2,2a"]
 |===
-| Key | Value | Notes
+| キー | 値 | 備考
 
 | *Target URL*
-| Your Event Stream URL
-| Paste the URL you copied from AAP.
+| あなたのEvent StreamのURL
+| AAPからコピーしたURLを貼り付けます。
 
 | *POST Content Type*
 | `application/json`
@@ -135,29 +135,29 @@ image::Nov-11-2024_at_13.39.26-image.png[Add a new webhook in Gitea, opts="borde
 
 | *Authorization Header*
 | `ansible123!`
-| This must match the token credential you created.
+| これは作成したトークン認証情報と一致する必要があります。
 
 | *Active*
 | ☑
-| Ensure the box is checked.
+| このボックスがチェックされていることを確認してください。
 |===
 +
-image::Nov-12-2024_at_15.05.10-image.png[New webhook form, opts="border"]
+image::Nov-12-2024_at_15.05.10-image.png[新しいWebhookのフォーム, opts="border"]
 
-. **Test the webhook delivery.** **Click** the link to the webhook you just created. At the bottom, click the **Test Delivery** button. Return to the `AAP` tab and check your Event Stream. The "Events received" count should now be `1`.
+. **Webhookの配信をテストします。** 作成したWebhookへのリンクをクリックします。下部にある**Test Delivery**ボタンをクリックします。`AAP`タブに戻り、Event Streamを確認します。「Events received」のカウントが`1`になっているはずです。
 +
-image::Nov-11-2024_at_14.03.49-image.png[Gitea test webhook delivery, opts="border"]
+image::Nov-11-2024_at_14.03.49-image.png[GiteaでWebhook配信をテスト, opts="border"]
 
-== Task 4: Create the Rulebook Activation
+== タスク4: Rulebook Activationの作成
 
-Now, create a Rulebook Activation to listen to the events received on the Event Stream.
+次に、Event Streamで受信したイベントをリッスンするために、`Rulebook Activation`を作成します。
 
-. **Navigate to Rulebook Activations.** In the `AAP` tab, go to **Automation Decisions** → **Rulebook Activations**.
-. **Create a new rulebook activation.**
+. **Rulebook Activationsに移動します。** `AAP`タブで、**Automation Decisions** → **Rulebook Activations**に移動します。
+. **新しいRulebook Activationを作成します。**
 +
 [cols="1,2,2a"]
 |===
-| Key | Value | Notes
+| キー | 値 | 備考
 
 | *Name*
 | `Gitea project events`
@@ -173,23 +173,23 @@ Now, create a Rulebook Activation to listen to the events received on the Event 
 
 | *Event streams*
 | `Gitea project events`
-| Select the Event Stream you created.
+| 作成したEvent Streamを選択します。
 
 | *Credential*
 | `AAP`
 |
 |===
 +
-After creating the activation, the output should look similar to this:
+アクティベーションを作成した後、出力はこのようになります。
 +
-image::Nov-11-2024_at_14.24.37-image.png[Final Rulebook Activation screen, opts="border"]
+image::Nov-11-2024_at_14.24.37-image.png[最終的なRulebook Activationの画面, opts="border"]
 
-== Task 5: Trigger the Gitea to Prometheus Workflow
+== タスク5: GiteaからPrometheusへのワークフローをトリガーする
 
-Let's put this integration to work by modifying a file, which will trigger an automated response.
+ファイルを変更して自動応答をトリガーすることで、この統合を実際に動かしてみましょう。
 
-. **Modify the Prometheus alert rules.** In the `Gitea` tab, navigate to the **eda-alertmanager** project and open the file `prometheus/alert.rules`. **Click** the pencil icon to edit it.
-. **Add a new alert rule.** **Modify** the content of this file to match the following, then scroll to the bottom and commit the changes.
+. **Prometheusのアラートルールを変更します。** `Gitea`タブで、**eda-alertmanager**プロジェクトに移動し、`prometheus/alert.rules`ファイルを開きます。鉛筆アイコンをクリックして編集します。
+. **新しいアラートルールを追加します。** このファイルの内容を以下と一致するように変更し、一番下までスクロールして変更をコミットします。
 +
 [source,yaml]
 ----
@@ -215,17 +215,17 @@ groups:
         description: "Available disk space on {{ $labels.mountpoint }} is below 20%."
 ----
 +
-This push event will kick off a new job template that updates the Prometheus configuration.
+このプッシュイベントにより、Prometheusの設定を更新する新しいジョブテンプレートが開始されます。
 
-. **Verify the new alert in Prometheus.** Once the job template is complete, go to the `Prometheus` tab. You should see a new alert under the "Alerts" section for low disk space.
+. **Prometheusで新しいアラートを確認します。** ジョブテンプレートが完了したら、`Prometheus`タブに移動します。「Alerts」セクションの下に、ディスクスペース低下に関する新しいアラートが表示されるはずです。
 +
-image::Nov-12-2024_at_08.09.50-image.png[New disk space alert in Prometheus, opts="border"]
+image::Nov-12-2024_at_08.09.50-image.png[Prometheusの新しいディスクスペースアラート, opts="border"]
 
-== Task 6: Trigger the Prometheus to AAP Workflow
+== タスク6: PrometheusからAAPへのワークフローをトリガーする
 
-Now, let's trigger the new alert.
+では、新しいアラートをトリガーしてみましょう。
 
-. **Fill up the disk space on a RHEL node.** From either the `RHEL1` or `RHEL2` tab, **run** this set of commands:
+. **RHELノードのディスクスペースをいっぱいにします。** `RHEL1`または`RHEL2`タブのどちらかから、この一連のコマンドを実行します。
 +
 [source,bash]
 ----
@@ -234,22 +234,22 @@ sudo fallocate -l 25G /bigfile
 df -h
 ----
 +
-The output will show that the device mounted to `/` is now over 80% full, which will trigger the alert.
+出力は、`/`にマウントされたデバイスが80%以上使用されていることを示し、これがアラートをトリガーします。
 +
-image::Nov-12-2024_at_08.14.30-image.png[Showing low disk space on / volume, opts="border"]
+image::Nov-12-2024_at_08.14.30-image.png[/ボリュームのディスクスペース低下を示す画面, opts="border"]
 
-. **Observe the automated remediation.** It may take a couple of minutes for the alert to fire. Once it does, the event will be sent to AAP. A job template will run in response, resolving the storage issue by removing the 25G file.
-. **Review the Rule Audit.** Navigate to **Automation Decisions** → **Rule Audit** in AAP. You will see both the disk space alert "FIRING" and "RESOLVED" events.
+. **自動修正を監視します。** アラートが発行されるまでに数分かかることがあります。発行されると、イベントはAAPに送信されます。応答としてジョブテンプレートが実行され、25Gのファイルを削除することでストレージの問題を解決します。
+. **Rule Auditを確認します。** AAPで**Automation Decisions** → **Rule Audit**に移動します。ディスクスペースアラートの「FIRING」と「RESOLVED」の両方のイベントが表示されます。
 +
-image::Nov-12-2024_at_15.16.25-image.png[Disk space rule audit, opts="border"]
+image::Nov-12-2024_at_15.16.25-image.png[ディスクスペースのRule Audit画面, opts="border"]
 
 ---
 
-== Review
+== レビュー
 
-You just created an Event Stream and used it to receive events from a Git project, which in turn updated your monitoring. You then triggered an alert from that monitoring, which was automatically remediated.
+あなたはEvent Streamを作成し、それを使用してGitプロジェクトからイベントを受信し、それによって監視システムを更新しました。その後、その監視システムからアラートをトリガーし、それが自動的に修正されました。
 
 
-== Troubleshooting
+== トラブルシューティング
 
-If you have encountered an issue with this lab, please link:https://github.com/ansible/workshops/issues
+このラボで問題が発生した場合は、こちらへ: link:https://github.com/ansible/workshops/issues
