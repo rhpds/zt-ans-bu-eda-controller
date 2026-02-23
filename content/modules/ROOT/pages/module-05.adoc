@@ -178,6 +178,10 @@ Now, create a Rulebook Activation to listen to the events received on the Event 
 | *Credential*
 | `AAP`
 |
+
+| *Decision environment*
+| `Workshop Decision Environment`
+|
 |===
 +
 After creating the activation, the output should look similar to this:
